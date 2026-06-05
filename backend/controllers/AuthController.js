@@ -4,12 +4,22 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const CustomerModel = require("../models/CustomerModel");
 
+// ✅ SECURITY FIX: Validate JWT_SECRET at startup
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("❌ ERROR: JWT_SECRET environment variable is not set!");
+  console.error("Please set JWT_SECRET in your .env file");
+  process.exit(1);
+}
+
 // Tạo nhân viên / Admin / Manager
 const createEmployee = async (req, res) => {
   try {
+    console.log("📌 createEmployee - req.body:", req.body);
     const { name, email, phone, password, role, branchId } = req.body;
 
     if (!name || !email || !password || !role) {
+      console.log("⚠️ Missing required fields");
       return res.status(400).json({ message: "Vui lòng nhập đủ thông tin!" });
     }
 
@@ -60,9 +70,11 @@ const createEmployee = async (req, res) => {
 // Đăng nhập nhân viên / Admin / Manager
 const loginEmployee = async (req, res) => {
   try {
+    console.log("📌 loginEmployee - req.body:", req.body);
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log("⚠️ Missing email or password");
       return res
         .status(400)
         .json({ message: "Vui lòng nhập email và mật khẩu!" });
@@ -82,13 +94,21 @@ const loginEmployee = async (req, res) => {
     // Tạo JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET || "mysecretkey",
+      JWT_SECRET,  // ✅ Now using validated JWT_SECRET
       { expiresIn: "1d" }
     );
 
+    // ✅ SECURITY FIX: Send token in httpOnly cookie instead of response body
+    res.cookie("token", token, {
+      httpOnly: true,  // Cannot be accessed by JavaScript (prevents XSS)
+      secure: process.env.NODE_ENV === "production",  // Only HTTPS in production
+      sameSite: "strict",  // CSRF protection
+      maxAge: 24 * 60 * 60 * 1000,  // 1 day
+    });
+
     res.status(200).json({
       message: "Đăng nhập thành công!",
-      token,
+      // ⚠️ DO NOT send token in response body anymore
       employee: {
         id: user._id,
         name: user.name,
@@ -119,9 +139,13 @@ const getAllEmployees = async (req, res) => {
 
 const syncCustomer = async (req, res) => {
   try {
+    console.log("📌 syncCustomer - req.body:", req.body);
     const { clerkId, name, email, phone, address } = req.body;
 
-    if (!clerkId) return res.status(400).json({ message: "clerkId required" });
+    if (!clerkId) {
+      console.log("⚠️ clerkId missing");
+      return res.status(400).json({ message: "clerkId required" });
+    }
 
     // Kiểm tra khách đã tồn tại chưa
     let customer = await CustomerModel.findOne({ clerkId });
@@ -145,7 +169,62 @@ const syncCustomer = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// ✅ NEW: Get current user info from JWT token
+const getCurrentUser = async (req, res) => {
+  try {
+    // req.user is set by authMiddleware from JWT token
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await User.findById(req.user.id)
+      .select("-password")
+      .populate("branch", "name address");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User info retrieved",
+      employee: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        branch: user.branch,
+      },
+    });
+  } catch (err) {
+    console.error("Error getting current user:", err);
+    res.status(500).json({ message: "Error retrieving user info" });
+  }
+};
+
+// ✅ NEW: Logout endpoint (clear httpOnly cookie)
+const logoutEmployee = async (req, res) => {
+  try {
+    // Clear httpOnly cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Error logging out:", err);
+    res.status(500).json({ message: "Error during logout" });
+  }
+};
+
 module.exports = {
   createEmployee,
-  loginEmployee,getAllEmployees,syncCustomer
+  loginEmployee,
+  getAllEmployees,
+  syncCustomer,
+  getCurrentUser,
+  logoutEmployee,
 };

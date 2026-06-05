@@ -10,52 +10,8 @@ export const weekDaysLabel = [
 "Thứ 7",
 "Chủ nhật",
 ];
-export   const scheduleData = {
-morning: {
-    0: {
-    type: "study",
-    subject: "Lập trình Web",
-    class: "CNTT01",
-    period: "Tiết 1-3",
-    room: "A101",
-    teacher: "Nguyễn Văn B",
-    },
-    2: {
-    type: "exam",
-    subject: "Toán rời rạc",
-    class: "CNTT02",
-    period: "Tiết 1-3",
-    room: "Phòng A1",
-    teacher: "Trần Văn C",
-    },
-},
-afternoon: {
-    1: {
-    type: "study",
-    subject: "Cơ sở dữ liệu",
-    class: "CNTT01",
-    period: "Tiết 4-6",
-    room: "B202",
-    teacher: "Lê Thị D",
-    },
-    4: {
-    type: "study",
-    subject: "Mạng máy tính",
-    class: "CNTT03",
-    period: "Tiết 4-6",
-    room: "C303",
-    teacher: "Phạm Văn E",
-    },
-},
-};
 
-export   const menuManager = [
-    { path: "/manager-dashboard", label: "Trang chủ" },
-    { path: "/manager-dashboard/thong-tin", label: "Thông tin chung" },
-    { path: "/manager-dashboard/hoc-tap", label: "Học tập" },
-    { path: "/manager-dashboard/hoc-phi", label: "Học phí" },
-    { path: "/manager-dashboard/dang-ky-hoc-phan", label: "Đăng ký học phần" },
-  ];
+
 
 export const menuStaff = [
   { path: "/staff-dashboard", label: "Trang chủ", icon: "home" },

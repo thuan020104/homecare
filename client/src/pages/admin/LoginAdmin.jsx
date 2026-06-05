@@ -20,13 +20,19 @@ export default function LoginService() {
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         form,
-        { withCredentials: true }
+        { withCredentials: true }  // ✅ Send cookies with request
       );
 
       const user = res.data.employee;
 
-      // Lưu user vào session
-      sessionStorage.setItem("user", JSON.stringify(user));
+      // ✅ SECURITY FIX: Do NOT store user data in sessionStorage
+      // JWT token is stored in httpOnly cookie by backend
+      // Frontend stores user in localStorage (non-sensitive) for UX only
+      localStorage.setItem("user", JSON.stringify({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      }));
 
       // Thông báo đăng nhập thành công
       toast.success(`Đăng nhập thành công ${user.role}`, { duration: 3000 });
@@ -47,10 +53,11 @@ export default function LoginService() {
 
   // Nếu user đã login, redirect
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
       if (user.role === "admin") navigate("/admin-dashboard", { replace: true });
+      else if (user.role === "manager") navigate("/manager-dashboard", { replace: true });
       else if (user.role === "staff") navigate("/staff-dashboard", { replace: true });
     }
   }, [navigate]);

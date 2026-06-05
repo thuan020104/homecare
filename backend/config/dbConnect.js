@@ -2,16 +2,16 @@ const {
   default: mongoose,
 } = require("mongoose");
 
-const dbConnect = () => {
+const dbConnect = async () => {
   try {
-    const conn = mongoose.connect(
-      "mongodb://127.0.0.1/manager-btaskee"
+    await mongoose.connect(
+      process.env.MONGO_URI || "mongodb://localhost:27017/manager-btaskee"
     );
-    console.log(
-      "Database connect successfully"
-    );
+    console.log("✓ Database connected successfully");
   } catch (error) {
-    console.log("Database error");
+    console.error("✗ Database connection failed:", error.message);
+    process.exit(1);
   }
 };
+
 module.exports = dbConnect;

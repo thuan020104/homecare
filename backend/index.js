@@ -1,3 +1,6 @@
+// ✅ Load environment variables FIRST
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -16,7 +19,7 @@ const orderRoutes = require("./routers/orderRoutes");
 const momoRoutes = require("./routers/momoRoutes");
 dbConnect()
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true
 }));
 app.use(morgan("dev"));

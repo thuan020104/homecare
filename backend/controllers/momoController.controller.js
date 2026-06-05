@@ -3,11 +3,19 @@ const crypto = require("crypto");
 const axios = require("axios");
 const Order = require("../models/orderModel");
 
-const partnerCode = "MOMO";
-const accessKey = "F8BBA842ECF85";
-const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-const redirectUrl = "http://localhost:5173/orders-susscess"; // frontend sau khi thanh toán
-const ipnUrl = "https://fcd2b2d01c20.ngrok-free.app/api/momo/callback";
+// ✅ SECURITY FIX: Load từ environment variables thay vì hardcode
+const partnerCode = process.env.MOMO_PARTNER_CODE;
+const accessKey = process.env.MOMO_ACCESS_KEY;
+const secretKey = process.env.MOMO_SECRET_KEY;
+const redirectUrl = process.env.MOMO_REDIRECT_URL || "http://localhost:5173/orders-success"; // fixed typo: susscess -> success
+const ipnUrl = process.env.MOMO_IPN_URL;
+
+// Validate required environment variables at startup
+if (!partnerCode || !accessKey || !secretKey || !redirectUrl || !ipnUrl) {
+  console.error("❌ ERROR: Missing MOMO configuration in environment variables");
+  console.error("Required: MOMO_PARTNER_CODE, MOMO_ACCESS_KEY, MOMO_SECRET_KEY, MOMO_REDIRECT_URL, MOMO_IPN_URL");
+  process.exit(1);
+}
 
 // =======================
 // 1️⃣ Tạo yêu cầu thanh toán MoMo

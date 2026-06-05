@@ -4,12 +4,12 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Meta from "../components/Meta";
-import { heroImages, features, howItWorks, services, testimonials, faqs } from "../data/index";
+import { heroImages, features, howItWorks, testimonials, faqs } from "../data/index";
 import axios from "axios";
 
 export default function HomePage() {
   const [openIndex, setOpenIndex] = useState(null);
-   const [services, setServices] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -281,7 +281,7 @@ export default function HomePage() {
         </Swiper>
       </section>
 
-      {/* ❓ FAQ */}
+      {/* ❓ FAQ
       <section className="max-w-3xl mx-auto px-6 py-28">
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-12">
           Câu hỏi thường gặp
@@ -308,7 +308,7 @@ export default function HomePage() {
             )}
           </motion.div>
         ))}
-      </section>
+      </section> */}
 
       {/* ⚡ FOOTER CTA */}
       <footer className="relative overflow-hidden bg-gradient-to-r from-[#ff8228] to-orange-600 text-white text-center py-24">
