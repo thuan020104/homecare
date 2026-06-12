@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const axios = require("axios");
-const Order = require("../models/orderModel");
+const Order = require("../models/OrderModel");
 
 // ✅ SECURITY FIX: Load từ environment variables thay vì hardcode
 const partnerCode = process.env.MOMO_PARTNER_CODE;
