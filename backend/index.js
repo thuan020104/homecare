@@ -16,6 +16,7 @@ const workAssignmentRoutes = require("./routers/workAssignmentRoutes");
 const employeeRoutes = require("./routers/employeeRoute");
 const orderRoutes = require("./routers/orderRoutes");
 const momoRoutes = require("./routers/momoRoutes");
+const PORT = process.env.PORT || 5000;
 dbConnect()
 app.get("/", (req, res) => {
   res.send("API is running successfully");
@@ -49,8 +50,6 @@ app.use((req, res, next) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(
-    `Server is running at PORT ${PORT}`
-  );
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running at PORT ${PORT}`);
 });
