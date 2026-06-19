@@ -15,7 +15,7 @@ export default function ServiceList() {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/services/getall");
+      const res = await axios.get("https://homecare-2026.onrender.com/api/services/getall");
       setServices(res.data);
     } catch (err) {
       console.error("Lỗi khi lấy dịch vụ:", err);
