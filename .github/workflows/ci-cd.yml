@@ -53,7 +53,8 @@ jobs:
 
       - name: Check for linting issues
         working-directory: backend
-        run: npx eslint . --max-warnings 0 2>/dev/null || echo "Note: ESLint not configured, skipping"
+        run: |
+          npx eslint . --max-warnings 0 2>/dev/null || echo "Note: ESLint not configured, skipping"
         continue-on-error: true
 
       - name: Verify environment variables
@@ -84,12 +85,14 @@ jobs:
 
       - name: Build project
         working-directory: client
-        run: npm run build || echo "Note: Build script not found or failed, skipping"
+        run: |
+          npm run build || echo "Note: Build script not found or failed, skipping"
         continue-on-error: true
 
       - name: Check for linting issues
         working-directory: client
-        run: npx eslint . --max-warnings 0 2>/dev/null || echo "Note: ESLint not configured, skipping"
+        run: |
+          npx eslint . --max-warnings 0 2>/dev/null || echo "Note: ESLint not configured, skipping"
         continue-on-error: true
 
   # ============= DOCKER BUILD & PUSH =============
@@ -156,7 +159,8 @@ jobs:
 
       - name: Check dependencies
         working-directory: backend
-        run: npm audit --audit-level=moderate || echo "Note: npm audit warnings"
+        run: |
+            npm audit --audit-level=moderate || echo "Note: npm audit warnings"
         continue-on-error: true
 
   # ============= NOTIFICATION =============
