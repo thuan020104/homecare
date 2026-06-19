@@ -4,11 +4,6 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running at PORT ${PORT}`);
-});
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
@@ -22,6 +17,9 @@ const employeeRoutes = require("./routers/employeeRoute");
 const orderRoutes = require("./routers/orderRoutes");
 const momoRoutes = require("./routers/momoRoutes");
 dbConnect()
+app.get("/", (req, res) => {
+  res.send("API is running successfully");
+});
 app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true
